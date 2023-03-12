@@ -1,13 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/new_conversation_coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Patient Registration"
+        android:layout_centerHorizontal="true"
+        android:layout_marginVertical="50dp"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        />
+
+    <TextView
+        android:id="@+id/totalMessagesTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:layout_alignParentEnd="true"
+        android:layout_marginVertical="50dp"
+        android:layout_marginHorizontal="12dp"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        />
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:layout_centerInParent="true"
+
+        >
+
+
+        <EditText
+            android:id="@+id/patientNameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter Patient Name"
+
+            />
+
+        <EditText
+            android:id="@+id/parentNameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter Parent Name"
+            android:inputType="text"
+            android:layout_below="@+id/patientNameEditText"
+            android:layout_marginVertical="10dp"
+            />
+
+        <EditText
+            android:id="@+id/ageEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter Age"
+            android:inputType="numberDecimal"
+            android:layout_below="@+id/parentNameEditText"
+            android:layout_marginVertical="10dp"
+            />
+
+
+        <EditText
+            android:id="@+id/mobileNumberEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter Mobile Number"
+            android:inputType="phone"
+            android:layout_below="@+id/ageEditText"
+            android:layout_marginVertical="10dp"
+            />
+
+
+        <RadioGroup
+            android:id="@+id/genderRadioGrp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/mobileNumberEditText"
+            >
+
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Male"
+                />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Female"
+                />
+
+
+        </RadioGroup>
+
+
+
+        <EditText
+            android:id="@+id/addressEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter Address"
+            android:layout_marginVertical="10dp"
+            android:layout_below="@+id/genderRadioGrp"
+
+            />
+
+
+        <Button
+            android:id="@+id/registerPatientBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Register Patient"
+            android:backgroundTint="@color/white"
+            android:layout_below="@+id/addressEditText"
+            android:layout_centerHorizontal="true"
+            android:layout_marginVertical="30dp"
+            />
+
+
+    </RelativeLayout>
+
+
+
+
+
+
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/new_conversation_toolbar"
         android:layout_width="match_parent"
+        android:visibility="gone"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/color_primary"
         app:title="@string/new_conversation"
@@ -17,6 +148,7 @@
         android:id="@+id/new_conversation_holder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="gone"
         android:layout_marginTop="?attr/actionBarSize">
 
         <com.simplemobiletools.commons.views.MyEditText
@@ -140,4 +272,4 @@
             android:layout_toStartOf="@+id/contacts_letter_fastscroller" />
 
     </RelativeLayout>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</RelativeLayout>

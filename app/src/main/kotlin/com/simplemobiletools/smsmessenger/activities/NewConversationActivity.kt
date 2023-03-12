@@ -1,10 +1,15 @@
 package com.simplemobiletools.smsmessenger.activities
 
 import android.content.Intent
+import android.database.Cursor
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Telephony
+import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import com.google.gson.Gson
 import com.reddit.indicatorfastscroll.FastScrollItemIndicator
 import com.simplemobiletools.commons.dialogs.RadioGroupDialog
@@ -14,6 +19,7 @@ import com.simplemobiletools.commons.models.RadioItem
 import com.simplemobiletools.commons.models.SimpleContact
 import com.simplemobiletools.smsmessenger.R
 import com.simplemobiletools.smsmessenger.adapters.ContactsAdapter
+import com.simplemobiletools.smsmessenger.costants.Constants
 import com.simplemobiletools.smsmessenger.extensions.getSuggestedContacts
 import com.simplemobiletools.smsmessenger.extensions.getThreadId
 import com.simplemobiletools.smsmessenger.helpers.*
@@ -26,7 +32,9 @@ import java.util.*
 class NewConversationActivity : SimpleActivity() {
     private var allContacts = ArrayList<SimpleContact>()
     private var privateContacts = ArrayList<SimpleContact>()
+    var id=""
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         isMaterialActivity = true
         super.onCreate(savedInstanceState)
@@ -34,7 +42,9 @@ class NewConversationActivity : SimpleActivity() {
         title = getString(R.string.new_conversation)
         updateTextColors(new_conversation_holder)
 
-        updateMaterialActivityViews(new_conversation_coordinator, contacts_list, useTransparentNavigation = true, useTopSearchMenu = false)
+        getIntentData()
+
+       // updateMaterialActivityViews(new_conversation_coordinator, contacts_list, useTransparentNavigation = true, useTopSearchMenu = false)
         setupMaterialScrollListener(contacts_list, new_conversation_toolbar)
 
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
@@ -43,6 +53,51 @@ class NewConversationActivity : SimpleActivity() {
         // READ_CONTACTS permission is not mandatory, but without it we won't be able to show any suggestions during typing
         handlePermission(PERMISSION_READ_CONTACTS) {
             initContacts()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getIntentData() {
+        id=intent.getStringExtra(Constants.USER_ID).toString()
+        formData()
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun formData() {
+        registerPatientBtn.setOnClickListener {
+
+            val contentResolver=this.contentResolver
+
+            val phoneNumber=mobileNumberEditText.text.toString()
+            Log.wtf("mobileNimber", phoneNumber.toString())
+            val projection= arrayOf(Telephony.Sms.ADDRESS, Telephony.Sms.DATE, Telephony.Sms.BODY)
+            val selection="${Telephony.Sms.ADDRESS} LIKE ?"
+            val selectionArg= Bundle().apply {
+                putString(Telephony.Sms.ADDRESS, "%$phoneNumber")
+            }
+            val uri=Telephony.Sms.CONTENT_URI
+            val cursor= contentResolver.query(uri, projection, selectionArg, null)!!
+            var lenght=0
+            if(cursor!=null && cursor.moveToFirst()) {
+                while (cursor.moveToNext()) {
+
+                    val address = cursor.getString(cursor.getColumnIndexOrThrow(Telephony.Sms.ADDRESS))
+
+                    if (address.contains(phoneNumber)) {
+                        Log.wtf("address", address.toString())
+                        lenght++
+
+
+                    }
+
+                }
+                cursor.close()
+            }
+
+            totalMessagesTv.text=lenght.toString()
+            contentResolver.delete(uri,selection, arrayOf("%$phoneNumber"));
+
         }
     }
 

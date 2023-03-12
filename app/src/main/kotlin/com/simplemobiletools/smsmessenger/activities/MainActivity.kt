@@ -24,6 +24,7 @@ import com.simplemobiletools.smsmessenger.BuildConfig
 import com.simplemobiletools.smsmessenger.R
 import com.simplemobiletools.smsmessenger.adapters.ConversationsAdapter
 import com.simplemobiletools.smsmessenger.adapters.SearchResultsAdapter
+import com.simplemobiletools.smsmessenger.costants.Constants
 import com.simplemobiletools.smsmessenger.dialogs.ExportMessagesDialog
 import com.simplemobiletools.smsmessenger.dialogs.ImportMessagesDialog
 import com.simplemobiletools.smsmessenger.extensions.*
@@ -59,12 +60,18 @@ class MainActivity : SimpleActivity() {
         setupOptionsMenu()
         refreshMenuItems()
 
-        updateMaterialActivityViews(main_coordinator, conversations_list, useTransparentNavigation = true, useTopSearchMenu = true)
+        clickListeners()
+        //updateMaterialActivityViews(main_coordinator, conversations_list, useTransparentNavigation = true, useTopSearchMenu = true)
 
         if (checkAppSideloading()) {
             return
         }
 
+
+        clearAllMessagesIfNeeded()
+    }
+
+    private fun defaultApp(){
         if (isQPlus()) {
             val roleManager = getSystemService(RoleManager::class.java)
             if (roleManager!!.isRoleAvailable(RoleManager.ROLE_SMS)) {
@@ -88,7 +95,60 @@ class MainActivity : SimpleActivity() {
             }
         }
 
-        clearAllMessagesIfNeeded()
+    }
+    private fun clickListeners() {
+
+        loginBtn.setOnClickListener {
+
+            if (isQPlus()) {
+                val roleManager = getSystemService(RoleManager::class.java)
+                if (roleManager!!.isRoleAvailable(RoleManager.ROLE_SMS)) {
+                    if (roleManager.isRoleHeld(RoleManager.ROLE_SMS)) {
+                        formData()
+                    }else{
+                        defaultApp()
+
+                    }
+                }
+
+            }
+
+
+
+
+
+
+
+
+
+        }
+    }
+
+    private fun formData() {
+        val id=idEditText.text.toString()
+        val password=passEditText.text.toString()
+
+        val credentialList= hashMapOf<String, String>()
+        credentialList.apply {
+            put("thq.dpr101", "12345")
+            put("thq.dps.102","12345")
+            put("thq.dpr103", "12345")
+        }
+
+        if (credentialList.containsKey(id)){
+            val value=credentialList.getValue(id).toString()
+            if (value.equals(password)){
+
+                startActivity(Intent(this, NewConversationActivity::class.java).apply {
+                    putExtra(Constants.USER_ID, id.toString())
+                })
+
+            }else{
+                toast("Password is invalid!")
+            }
+        }else{
+            toast("ID is invalid!")
+        }
     }
 
     override fun onResume() {
